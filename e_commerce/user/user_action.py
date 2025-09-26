@@ -73,8 +73,6 @@ def get_full_details(user_id):
         print("Error ",e)
         return None
 
-
-
 def get_all_products():
     try:
         sql="""
@@ -158,7 +156,6 @@ def get_product_by_id(product_id):
         print("Error in get_all_products_with_review : ", e)
         return None
     
-
 def get_review_product_id(product_id):
     try:
         sql = """
@@ -199,8 +196,7 @@ def get_review_product_id(product_id):
         print("Error in get_all_products_with_review : ", e)
         return None
     
-
-def insert_review(request):
+def insert_review(request): 
     try:
         sql ="insert into reviews (user_id , product_id , `comment` , rating) values (%s ,%s ,%s ,%s)"
         params =(
@@ -219,4 +215,113 @@ def insert_review(request):
         
     except Exception  as e:
         print("Error in review ",e)
+        return False
+    
+
+
+def insert_cart(user_id, product_id, quantity=1 , status="pending"):
+
+    try:
+        sql = """
+            INSERT INTO cart_details (user_id, product_id, quantity ,status)
+            VALUES (%s, %s, %s,%s)
+            ON DUPLICATE KEY UPDATE quantity = quantity + VALUES(quantity)
+        """
+
+        params = (user_id, product_id, quantity,status)
+
+        mycon, mycur = connect()
+        mycur.execute(sql, params)
+        mycon.commit()
+
+        if mycur.rowcount:
+            return True
+        else:
+            return False
+
+    except Exception as e:
+        print("Error in add_to_cart: ", e)
+        return False
+    
+def delete_cart_item(cart_id ,user_id):
+    try:
+        sql = "DELETE FROM cart_details WHERE cart_id = %s and user_id=%s"
+        params = (cart_id,user_id)
+
+        mycon, mycur = connect()
+        mycur.execute(sql, params)
+        mycon.commit()
+
+        if mycur.rowcount:
+            return True
+        else:
+            return False
+
+    except Exception as e:
+        print("Error in delete_cart_item: ", e)
+        return False
+
+def get_cart_items(user_id):
+    try:
+        sql = """
+            SELECT 
+                cd.cart_id,
+                pd.product_id,
+                pd.product_name,
+                pd.description,
+                pd.price,
+                pd.offer,
+                pd.price - (pd.price * pd.offer/100 ) AS disscount_price,
+                pd.stock,
+                pimg.image_url,
+                cd.quantity
+            
+            FROM cart_details cd
+            INNER JOIN product_details pd ON cd.product_id = pd.product_id
+            INNER JOIN product_images pimg ON pd.product_id = pimg.product_id
+            WHERE cd.user_id = %s AND cd.status = 'pending'
+        """
+        params = (user_id,)
+
+        mycon, mycur = connect()
+        mycur.execute(sql, params)
+        cart_items = mycur.fetchall()
+        mycur.close()
+
+        cart_list = [{
+                "cart_id": item[0],
+                "product_id": item[1],
+                "product_name": item[2],
+                "description": item[3],
+                "price": item[4],
+                "offer": item[5],
+                "disscount_price": round(item[6],2),
+                "stock": item[7],
+                "image_url": item[8],   # Assuming the image URL is in the second column of product_images
+                "quantity": item[9]
+        } for item in cart_items]
+    
+        return cart_list
+    
+    except Exception as e:
+        print("Error in get_cart_items : ", e)
+        return None
+
+
+def buy_cart_items(user_id):
+    try:
+        sql = "UPDATE cart_details SET status = 'purchased' WHERE user_id = %s AND status = 'pending'"
+        params = (user_id,)
+
+        mycon, mycur = connect()
+        mycur.execute(sql, params)
+        mycon.commit()
+
+        if mycur.rowcount:
+            return True
+        else:
+            return False
+
+    except Exception as e:
+        print("Error in buy_cart_items: ", e)
         return False

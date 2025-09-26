@@ -10,22 +10,7 @@ def index(request):
         return redirect("user_signin")
     
     products = get_all_products()
-
-    product_details = [
-        {
-            "product_id": product[0],
-            "product_name": product[1],
-            "description": product[2],
-            "price": product[3],
-            "offer": product[4],
-            "disscount_price": product[3] - (product[3] * product[4] / 100),
-            "stock": product[5],
-            "image_url": product[11],  # Assuming the image URL is in the second column of product_images
-        }
-        for product in products
-    ]
-    print(product_details)
-    return render(request , "user/index.html" ,{"products":product_details})
+    return render(request , "user/index.html" ,{"products":products})
 
 def user_signup(request):
 
@@ -152,8 +137,68 @@ def view_product_details(request,product_id):
                                                               "count_review":len(reviews),
                                                               "avg_review":avg_rev})
 
+def myCart(request):
+    if request.method == "GET":
+        user_id = request.session.get("user_id",0)
+
+        if not user_id:
+            return redirect("user_signin")
+        
+        cart_items = get_cart_items(user_id)
+
+        
+        total_amount = round(sum(item['disscount_price'] for item in cart_items),2)
+
+        return render(request, "user/mycart.html", {"cart_items": cart_items, "total_amount": total_amount})
+
 def add_cart(request,product_id):
-    return render(request, "user/mycart.html")
+    try:
+        user_id = request.session.get("user_id",0)
+
+        if not user_id:
+            return redirect("user_signin")
+        
+        flag = insert_cart(user_id,product_id)
+
+        if flag:
+            return redirect("myCart")
+        else:
+            return render(request, "user/product_details.html",{"error":1})
+        
+    except Exception as e:
+        print("Error in add_cart view: ", e)
+        return render(request, "user/product_details.html",{"error":1})
+
+def remove_cart_item(request, cart_id):
+    try:
+        user_id = request.session.get("user_id", 0)
+
+        if not user_id:
+            return redirect("user_signin")
+
+        flag = delete_cart_item(cart_id, user_id)
+
+        if flag:
+            return redirect("myCart")
+        else:
+            return render(request, "user/mycart.html", {"error": 1})
+
+    except Exception as e:
+        print("Error in delete_cart_item view: ", e)
+        return render(request, "user/mycart.html", {"error": 1})
+    
+def buy_product(request):
+    user_id = request.session.get("user_id", 0)
+
+    if not user_id:
+        return redirect("user_signin")
+    
+    flag = buy_cart_items(user_id)
+
+    if flag:
+        return render(request, "user/buy_success.html")
+    else:
+        return render(request, "user/mycart.html", {"error": 1})
 
 def logout(request):
     try:

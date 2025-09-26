@@ -18,14 +18,11 @@
         <p>Offer : {{product.offer}}%</p>
         <p>Disscount Price : ${{ product.disscount_price }}</p>
         <p>Stock: {{ product.stock }}</p>
-       
     </div>
 
-
     <button>
-        <a href="{% url 'add_cart' product.product_id%}">Add Cart</a>
+        <a href="{% url 'add_cart' product.product_id %}">Add Cart</a>
     </button>
-
 
     <div class="reviews">
         {% if reviews %}
@@ -47,7 +44,6 @@
 
     <form  method="post">
         {% csrf_token %}
-        
         <input type="text" name="product_id" id="" hidden value="{{ product.product_id }}">
         
         <h3>Submit Your Review</h3>

@@ -7,6 +7,12 @@
 </head>
 <body>
 
+    <a href="{% url 'index' %}">Home</a>
+    <a href="{% url 'myCart' %}">My Cart</a>
+    <a href="{% url 'profile' %}">Profile</a>
+    <a href="{% url 'logout' %}">Logout</a>
+
+   
     {% if user_data %}
 
     <form method="post">
