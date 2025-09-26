@@ -101,7 +101,7 @@ def get_all_products():
                 "description": product[2],
                 "price": product[3],
                 "offer": product[4],
-                "disscount_price": product[5],
+                "disscount_price": round(product[5],2),
                 "stock": product[6],
                 "image_url": product[7],  # Assuming the image URL is in the second column of product_images
         } for product in products]
@@ -217,8 +217,6 @@ def insert_review(request):
         print("Error in review ",e)
         return False
     
-
-
 def insert_cart(user_id, product_id, quantity=1 , status="pending"):
 
     try:
@@ -227,6 +225,13 @@ def insert_cart(user_id, product_id, quantity=1 , status="pending"):
             VALUES (%s, %s, %s,%s)
             ON DUPLICATE KEY UPDATE quantity = quantity + VALUES(quantity)
         """
+
+        cart_id , qnty = is_item_in_cart(user_id, product_id)
+
+        if qnty:
+            return update_cart_quantity(cart_id=cart_id, user_id=user_id, quantity=qnty + quantity)
+        
+          # If the item is already in the cart, we don't want to add more quantity here
 
         params = (user_id, product_id, quantity,status)
 
@@ -307,10 +312,47 @@ def get_cart_items(user_id):
         print("Error in get_cart_items : ", e)
         return None
 
+def update_cart_quantity(cart_id, user_id, quantity):
+    try:
+        sql = "UPDATE cart_details SET quantity = %s WHERE cart_id = %s AND user_id = %s"
+        params = (quantity, cart_id, user_id)
+
+        mycon, mycur = connect()
+        mycur.execute(sql, params)
+        mycon.commit()
+
+        if mycur.rowcount:
+            return True
+        else:
+            return False
+
+    except Exception as e:
+        print("Error in update_cart_quantity: ", e)
+        return False
+
+def is_item_in_cart(user_id, product_id):
+    try:
+        sql = "SELECT cart_id , quantity FROM cart_details WHERE user_id = %s AND product_id = %s AND status = 'pending'"
+        params = (user_id, product_id)
+
+        mycon, mycur = connect()
+        mycur.execute(sql, params)
+        item = mycur.fetchone()
+        mycur.close()
+
+        if item:
+
+            return item
+        else:
+            return False,False
+
+    except Exception as e:
+        print("Error in is_item_in_cart: ", e)
+        return False,False
 
 def buy_cart_items(user_id):
     try:
-        sql = "UPDATE cart_details SET status = 'purchased' WHERE user_id = %s AND status = 'pending'"
+        sql = "UPDATE cart_details SET status = 'ordering' WHERE user_id = %s AND status = 'pending'"
         params = (user_id,)
 
         mycon, mycur = connect()
@@ -325,3 +367,5 @@ def buy_cart_items(user_id):
     except Exception as e:
         print("Error in buy_cart_items: ", e)
         return False
+    
+

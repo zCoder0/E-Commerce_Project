@@ -12,5 +12,7 @@ user_urlpatterns = [
     path("add_cart/<int:product_id>/", views.add_cart, name="add_cart"),
     path("mycart.html",views.myCart ,name="myCart"),
     path("remove_cart/<int:cart_id>/",views.remove_cart_item ,name="remove_cart_item"),
+    path("update_cart/<int:cart_id>/",views.update_cart_item ,name="update_cart_item"),
+    path("buy_product/",views.buy_product ,name="buy_product"),
     path("logout",views.logout,name="logout"),
 ]

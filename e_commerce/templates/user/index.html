@@ -33,9 +33,9 @@
                 <img src="/{{MEDIA_URL}}{{ product.image_url }}" width="200" height="200" alt="{{ product.name }}">
                 <h2>Product : {{ product.product_name }}</h2>
                 <p>Description : {{ product.description|truncatewords:20 }}</p>
-                <del><p class="price">Original : ${{ product.price }}</p></del>
+                <del><p class="price">Original : $ {{ product.price }}</p></del>
                 <p>Offer : {{product.offer}}%</p>
-                <p>Disscount Price : ${{ product.disscount_price }}</p>
+                <p>Disscount Price : $ {{ product.disscount_price }}</p>
             </div>
             
             <button><a href="{% url 'view_product_details' product.product_id %}">View Details</a></button>

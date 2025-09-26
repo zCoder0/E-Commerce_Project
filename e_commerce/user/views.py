@@ -147,7 +147,7 @@ def myCart(request):
         cart_items = get_cart_items(user_id)
 
         
-        total_amount = round(sum(item['disscount_price'] for item in cart_items),2)
+        total_amount = round(sum(item['disscount_price']* item['quantity'] for item in cart_items),2)
 
         return render(request, "user/mycart.html", {"cart_items": cart_items, "total_amount": total_amount})
 
@@ -158,7 +158,11 @@ def add_cart(request,product_id):
         if not user_id:
             return redirect("user_signin")
         
+        print("Before insert" , user_id , product_id)
+
         flag = insert_cart(user_id,product_id)
+
+        print("After insert")
 
         if flag:
             return redirect("myCart")
@@ -186,10 +190,33 @@ def remove_cart_item(request, cart_id):
     except Exception as e:
         print("Error in delete_cart_item view: ", e)
         return render(request, "user/mycart.html", {"error": 1})
-    
+
+def update_cart_item(request, cart_id):
+    try:
+        user_id = request.session.get("user_id", 0)
+
+        if not user_id:
+            return redirect("user_signin")
+        if request.method == "POST":
+            quantity = int(request.POST["qnty"])
+            if quantity < 1:
+                quantity = 1  # Ensure quantity is at least 1
+
+            flag = update_cart_quantity(cart_id, user_id, quantity)
+
+            if flag:
+                return redirect("myCart")
+            else:
+                return render(request, "user/mycart.html", {"error": 1})
+        else:
+            return redirect("myCart")
+
+    except Exception as e:
+        print("Error in update_cart_item view: ", e)
+        return render(request, "user/mycart.html", {"error": 1})
+
 def buy_product(request):
     user_id = request.session.get("user_id", 0)
-
     if not user_id:
         return redirect("user_signin")
     
