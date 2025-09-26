@@ -41,9 +41,9 @@ create table if not exists cart_details(
     quantity int not null,
     added_at timestamp default current_timestamp,
     status varchar(50) not null,
-    foreign key (user_id) references user_register(user_id) on delete cascade
-)
-
+    foreign key (user_id) references user_register(user_id) on delete CASCADE ,
+    FOREIGN KEY (product_id) REFERENCES product_details(product_id) ON DELETE cascade
+);
 
 create table if not exists order_details(
     order_id int primary key auto_increment,
@@ -56,8 +56,7 @@ create table if not exists order_details(
     shipping_address varchar(255) not null,
     foreign key (user_id) references user_register(user_id) on delete cascade ,
     foreign key (product_id) references product_details(product_id) on delete cascade
-)
-
+);
 
 
 create table if not exists category_details(
@@ -66,6 +65,7 @@ create table if not exists category_details(
     description text,
     created_at timestamp default current_timestamp
 );
+
 
 create table if not exists supplier_details(
     supplier_id int primary key auto_increment,
