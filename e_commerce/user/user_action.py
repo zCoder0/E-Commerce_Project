@@ -20,7 +20,6 @@ def insert_user_register(user_name:str,user_mobile:str, user_email:str ,user_pas
         print("Error ",e)
         return None 
 
-
 def get_user_details(user_email,user_password):
     try:
         sql = "select * from  user_register where user_email =%s and user_password = %s"
@@ -42,7 +41,6 @@ def get_user_details(user_email,user_password):
         print("User_action.py Error line of 9 : ",e)
         return None
     
-
 def update_user_details(address, city, state, zipcode ,country ,user_id=None):
     try:
         sql = "update user_details set address = %s , city=%s , state = %s , zip_code = %s , country =%s where user_id =%s"
@@ -75,5 +73,150 @@ def get_full_details(user_id):
         print("Error ",e)
         return None
 
-def logout():
-    pass
+
+
+def get_all_products():
+    try:
+        sql="""
+             SELECT 
+                pd.product_id, 
+                pd.product_name, 
+                pd.description,
+                pd.price,
+                pd.offer,
+                pd.price - (pd.price * pd.offer/100 ) AS disscount_price,
+                pd.stock,
+                pimg.image_url
+
+            FROM product_details pd
+            INNER JOIN product_images pimg
+                ON pd.product_id = pimg.product_id
+
+        """
+        mycon , mycur = connect()
+        mycur.execute(sql)
+        products = mycur.fetchall()
+
+        product_list = [ { 
+                "product_id": product[0],
+                "product_name": product[1],
+                "description": product[2],
+                "price": product[3],
+                "offer": product[4],
+                "disscount_price": product[5],
+                "stock": product[6],
+                "image_url": product[7],  # Assuming the image URL is in the second column of product_images
+        } for product in products]
+
+        mycur.close()
+        return product_list
+    
+    except Exception as e:
+        print("Error in get_all_products : ",e)
+        return None
+
+def get_product_by_id(product_id):
+    try:
+        sql = """
+            SELECT 
+                pd.product_id, 
+                pd.product_name, 
+                pd.description,
+                pd.price,
+                pd.offer,
+                pd.price - (pd.price * pd.offer/100 ) AS disscount_price,
+                pd.stock,
+                pimg.image_url
+
+            FROM product_details pd
+            INNER JOIN product_images pimg
+                ON pd.product_id = pimg.product_id
+
+            WHERE pd.product_id = %s
+        """
+        params = (product_id,)
+        mycon, mycur = connect()
+        mycur.execute(sql,params)
+        product = mycur.fetchone()
+        mycur.close()
+
+        product_list = {
+                "product_id": product[0],
+                "product_name": product[1],
+                "description": product[2],
+                "price": product[3],
+                "offer": product[4],
+                "disscount_price": product[5],
+                "stock": product[6],
+                "image_url": product[7],   # Assuming the image URL is in the second column of product_images
+        }
+           
+
+        return product_list
+    
+    except Exception as e:
+        print("Error in get_all_products_with_review : ", e)
+        return None
+    
+
+def get_review_product_id(product_id):
+    try:
+        sql = """
+            SELECT 
+                ur.user_name,
+                r.`comment` ,
+                r.rating,
+                r.review_date
+                
+            FROM product_details pd
+
+            inner JOIN reviews r
+                ON r.product_id = pd.product_id
+                
+            inner JOIN user_register ur
+                ON ur.user_id = r.user_id
+                
+            WHERE pd.product_id = %s
+
+
+        """
+        params = (product_id,)
+        mycon, mycur = connect()
+        mycur.execute(sql,params)
+        reviews = mycur.fetchall()
+        mycur.close()
+
+        review_list = [{
+                "reviewer": review[0],
+                "comment": review[1],
+                "rating": review[2],
+                "review_date": review[3],  # Assuming the image URL is in the second column of product_images
+        } for review in reviews]
+           
+        return review_list
+    
+    except Exception as e:
+        print("Error in get_all_products_with_review : ", e)
+        return None
+    
+
+def insert_review(request):
+    try:
+        sql ="insert into reviews (user_id , product_id , `comment` , rating) values (%s ,%s ,%s ,%s)"
+        params =(
+            request.session.get("user_id",0),
+            int(request.POST['product_id']),
+            request.POST['comment'],
+            int(request.POST['rating'])
+        )
+        mycon , mycur = connect()
+        mycur.execute(sql,params)
+        mycon.commit()
+        if mycur.rowcount:
+            return True
+        else:
+            return False
+        
+    except Exception  as e:
+        print("Error in review ",e)
+        return False

@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Product | E-Commerce</title>
+    <title>Add Product | Inventory | E-Commerce</title>
 </head>
 <body>
 
     <h1>Add New Product</h1>
-    <form method="post">
+    <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
 
         <label for="product_image">Product Image</label>
@@ -23,18 +23,39 @@
         <label for="price">Price:</label>
         <input type="number" id="price" name="price" step="0.01" required><br><br>
 
+        <label for="price">Offer:</label>
+        <input type="number" id="offer" name="offer"  required><br><br>
+
         <label for="stock">Stock Quantity:</label>
         <input type="number" id="stock" name="stock" required><br><br>
+
+        <label for="category">Category</label>
+        <select id="category" name="category_id" required>
+            {% for category in categories %}
+                <option value="{{ category.category_id }}">{{ category.category_name }}</option>
+            {% endfor %}
+        </select><br><br>
+
+        <label for="supplier">Supplier</label>
+        <select id="supplier" name="supplier_id" required>
+            {% for supplier in suppliers %}
+                <option value="{{ supplier.supplier_id }}">{{ supplier.supplier_name }}</option>
+            {% endfor %}
+        </select><br><br>
+
 
         <button type="submit">Add Product</button>
     </form>
     
+ 
+    <button><a href="{% url 'inventory_management' %}">Back</a>
+    </button>
 
     {% if error %}
         <script>
             alert("Failed to add product!");
         </script>
     {% endif %}
-    
+
 </body>
 </html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details | E-Commerce</title>
+</head>
+<body>
+    
+    {% include 'user/navbar.html' %}
+
+    <h1>Product Details</h1>
+    <div class="product-detail">
+        <img src="/{{MEDIA_URL}}{{ product.image_url }}" width="200" height="200" alt="{{ product.name }}">
+        <h2>Product Name : {{ product.product_name }}</h2>
+        <p>Descriptoin : {{ product.description }}</p>
+        <p class="price">Price  : ${{ product.price }}</p>
+        <p>Offer : {{product.offer}}%</p>
+        <p>Disscount Price : ${{ product.disscount_price }}</p>
+        <p>Stock: {{ product.stock }}</p>
+       
+    </div>
+
+
+    <button>
+        <a href="{% url 'add_cart' product.product_id%}">Add Cart</a>
+    </button>
+
+
+    <div class="reviews">
+        {% if reviews %}
+            
+        Total Reviews: {{ count_review }}
+        Average Rating: {{ avg_review }}/5
+            <h3>Customer Reviews:</h3>
+            {% for review in reviews %}
+                <div class="review">
+                    <p><strong>{{ review.reviewer }}</strong> (Rating: {{ review.rating }}/5)</p>
+                    <p>{{ review.comment }}</p>
+                    <p>{{ review.review_date }}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No reviews available for this product.</p>
+        {% endif %}
+    </div>
+
+    <form  method="post">
+        {% csrf_token %}
+        
+        <input type="text" name="product_id" id="" hidden value="{{ product.product_id }}">
+        
+        <h3>Submit Your Review</h3>
+        <label for="rating">Rating (1-5):</label>
+        <input type="number" id="rating" name="rating" min="1" max="5" required>
+        <br>
+        <label for="comment">Comment:</label>
+        <textarea id="comment" name="comment" rows="4" cols="50" required></textarea>
+        <br>
+        <button type="submit">Submit Review</button>
+    </form>
+
+    {% include 'user/footer.html' %}
+
+</body>
+</html>

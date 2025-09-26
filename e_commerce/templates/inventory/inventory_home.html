@@ -13,11 +13,10 @@
     {% block content %}
     <!-- Inventory content will go here -->
         
-        <div class="nav">
+          <div class="nav">
             <a href="{% url 'inventory_home' %}">Inventory Home</a> |
-            <a href="#">Add Product</a> |
-            <a href="#">View Products</a> |
-            <a href="#">Categories</a> |
+            <a href="{% url 'inventory_management' %}">Manage Inventory</a> |
+            <a href="{% url 'category_management' %}">Categories</a> |
             <a href="#">Suppliers</a> |
             <a href="#">Stock Levels</a> |
             <a href="#">Reports</a>

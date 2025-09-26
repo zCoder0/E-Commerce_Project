@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Category Management | E-Commerce</title>
+</head>
+<body>
+    
+    <h1>Category Management</h1>
+       
+          <div class="nav">
+            <a href="{% url 'inventory_home' %}">Inventory Home</a> |
+            <a href="{% url 'inventory_management' %}">Manage Inventory</a> |
+            <a href="{% url 'category_management' %}">Categories</a> |
+            <a href="#">Suppliers</a> |
+            <a href="#">Stock Levels</a> |
+            <a href="#">Reports</a>
+        </div>
+
+    <br><br>
+    <button><a href="{% url 'add_category_request' %}">Add New Category</a></button>
+    <br><br>
+
+    {% if categories %}
+
+    <table border="1">
+        <tr>
+            <th>Category ID</th>
+            <th>Category Name</th>
+            <th>Description</th>
+            <th>Actions</th>
+        </tr>
+        {% for category in categories %}
+        <tr>
+            <td>{{ category.category_id }}</td>
+            <td>{{ category.category_name }}</td>
+            <td>{{ category.description }}</td>
+            <td>
+                <a href="{% url 'update_category_request' category.category_id %}">Edit</a> |
+                <a href="{% url 'delete_category_request' category.category_id %}">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    {% else %}
+        <p>No categories available.</p>
+    {% endif %}
+
+
+</body>
+</html>

@@ -20,7 +20,22 @@ from django.urls import path
 
 from user.urls import *
 from inventory.urls import *
+from django.conf import settings
+from django.conf.urls.static import static
 
-urlpatterns = [user for user in user_urlpatterns]
+"""
+urlpatterns =[
+    path('',views.index,name=''),
+    path('' ,views.index,name='index'),
+]
+"""
 
-urlpatterns += [inventory for inventory in inventory_urlpatterns]
+urlpatterns = [
+    path('admin/', admin.site.urls),
+]
+# Add your user and inventory urls
+urlpatterns += user_urlpatterns
+urlpatterns += inventory_urlpatterns
+
+# Add media serving (for images)
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

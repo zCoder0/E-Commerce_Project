@@ -9,7 +9,23 @@ def index(request):
     if not user_id:
         return redirect("user_signin")
     
-    return render(request , "user/index.html")
+    products = get_all_products()
+
+    product_details = [
+        {
+            "product_id": product[0],
+            "product_name": product[1],
+            "description": product[2],
+            "price": product[3],
+            "offer": product[4],
+            "disscount_price": product[3] - (product[3] * product[4] / 100),
+            "stock": product[5],
+            "image_url": product[11],  # Assuming the image URL is in the second column of product_images
+        }
+        for product in products
+    ]
+    print(product_details)
+    return render(request , "user/index.html" ,{"products":product_details})
 
 def user_signup(request):
 
@@ -112,6 +128,32 @@ def profile(request):
 
 def myCart(request):
     return render(request,"user/mycart.html")
+
+def view_product_details(request,product_id):
+    product = get_product_by_id(product_id)
+    reviews  = get_review_product_id(product_id)
+    avg_rev = round(sum(rev['rating'] for rev in reviews) / len(reviews) if reviews else 1  ,2)
+   
+    if request.method == "POST":
+  
+        flag = insert_review(request)
+
+        if flag:
+                
+            return redirect("view_product_details" , product_id=product_id)
+        
+        else: 
+            return render(request , "user/product_details.html" ,{"error":1})
+    
+    else:
+
+        return render(request , "user/product_details.html" ,{"product":product , 
+                                                              "reviews":reviews,
+                                                              "count_review":len(reviews),
+                                                              "avg_review":avg_rev})
+
+def add_cart(request,product_id):
+    return render(request, "user/mycart.html")
 
 def logout(request):
     try:

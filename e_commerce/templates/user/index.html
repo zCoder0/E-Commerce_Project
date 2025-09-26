@@ -3,14 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Index</title>
+    <title>Products | E-Commerce</title>
+    <link rel="stylesheet" href="static/products.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 </head>
 <body>
 
+     
+    {% include 'user/navbar.html' %}
+
+     <h1>Welcome to the E-Commerce Platform</h1>
+     <p>Explore our wide range of products and enjoy shopping!</p>
+
+
+    <a href="index.html">Home</a>
     <a href="cart.html">My Cart</a>
     <a href="profile.html">Profile</a>
-
     <a href="{% url 'logout' %}">Logout</a>
 
+   
+    {% if products %}
+    <div class="container">
+        <h1>Products</h1>
+        <div class="product-grid">
+            {% for product in products %}
+            <p>/{{MEDIA_URL}}{{ product.image_url }}</p>
+            <div class="product-card">
+                <img src="/{{MEDIA_URL}}{{ product.image_url }}" width="200" height="200" alt="{{ product.name }}">
+                <h2>Product : {{ product.product_name }}</h2>
+                <p>Description : {{ product.description|truncatewords:20 }}</p>
+                <del><p class="price">Original : ${{ product.price }}</p></del>
+                <p>Offer : {{product.offer}}%</p>
+                <p>Disscount Price : ${{ product.disscount_price }}</p>
+            </div>
+            
+            <button><a href="{% url 'view_product_details' product.product_id %}">View Details</a></button>
+            {% endfor %}
+        </div>
+    </div>
+
+       {% else %}
+            <p>No products available.</p>
+       {% endif %}
+
+    {% include 'user/footer.html' %}
+    
 </body>
 </html>

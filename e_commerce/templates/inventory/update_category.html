@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Category | E-Commerce</title>
+</head>
+<body>
+    
+    <h1>Update the Category</h1>
+    <form method="post">
+        {% csrf_token %}
+
+        <label for="category_name">Category Name:</label>
+        <input type="text" id="category_name" name="category_name" value="{{category.category_name}}" required><br><br>
+
+        <label for="description">Description:</label><br>
+        <textarea id="description" name="description" rows="4" cols="50" value="{{category.description}}" required></textarea><br><br>
+
+        <button type="submit">Update Category</button>
+    </form>
+    
+    <button><a href="{% url 'category_management' %}">Back</a>
+    </button>
+
+    {% if error %}
+        <script>
+            alert("Failed to update category!");
+        </script>
+    {% endif %}
+</body>
+</html>

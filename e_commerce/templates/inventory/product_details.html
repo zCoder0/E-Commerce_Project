@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Details | Inventory | E-Commerce</title>
+</head>
+<body>
+    
+    <h1>Product Details</h1>
+    <div>
+        <h2>{{ product.product_name }}</h2>
+        <img src="/{{MEDIA_URL}}{{product.image_url}}" alt="{{ product.product_name }}" width="200">
+        <p><strong>Description:</strong> {{ product.description }}</p>
+        <del><p><strong>Original Price:</strong> ${{ product.price }}</p></del>
+        <p><strong>Offer:</strong>{{product.offer}}%</p>
+        <p><strong>Disscounted Price:</strong> ${{ product.disscount_price}}</p>
+        <p><strong>Stock:</strong> {{ product.stock }}</p>
+        <p><strong>Category:</strong> {{ product.category_name }}</p>
+        <p><strong>Supplier:</strong> {{ product.supplier_name }}</p>
+    </div>
+
+    <button><a href="{% url 'inventory_management' %}">Back to Inventory Management</a></button>
+
+
+    {% if error %}
+        <script>alert("Failed")</script>
+    {% endif %}
+</body>
+</html>

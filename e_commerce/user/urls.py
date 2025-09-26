@@ -8,6 +8,9 @@ user_urlpatterns = [
     path("user_signin.html",views.user_signin ,name="user_signin"),
     path("index.html",views.index ,name='index'),
     path("profile.html",views.profile ,name="profile"),
+    path("product_details/<int:product_id>/", views.view_product_details, name="view_product_details"),
+    path("add_cart/<int:product_id>/", views.add_cart, name="add_cart"),
     path("mycart.html",views.myCart ,name="myCart"),
+
     path("logout",views.logout,name="logout"),
 ]

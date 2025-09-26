@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Management | Inventory | E-Commerce</title>
+</head>
+<body>
+    
+      {% block content %}
+    <!-- Inventory content will go here -->
+        
+          
+         
+
+        <h1>Inventory Management</h1>
+        <p>Manage your inventory here. You can add, update, or delete products.</p>
+
+         <div class="nav">
+            <a href="{% url 'inventory_home' %}">Inventory Home</a> |
+            <a href="{% url 'inventory_management' %}">Manage Inventory</a> |
+            <a href="{% url 'category_management' %}">Categories</a> |
+            <a href="#">Suppliers</a> |
+            <a href="#">Stock Levels</a> |
+            <a href="#">Reports</a>
+        </div>
+
+        <br><br>
+        <button> <a href="{% url 'add_product_request' %}">Add new product</a> </button>
+
+        <br><br>
+        {% if products %}
+        <table>
+            <tr>
+                <td>Product Name</td>
+                <td>Price</td>
+                <td>Stock</td>
+                <td>Description</td>
+                <td>Image</td>
+                <td>Actions</td>
+            </tr>
+
+            
+            {% for product in products %}
+            <tr>
+                <td>{{ product.product_name }}</td>
+                <td>{{ product.price }}</td>
+                <td>{{ product.stock }}</td>
+                <td>{{ product.description }}</td>
+              
+                <td><img src="/{{MEDIA_URL}}{{product.image_url}}"  width="100"></td>
+                <td>
+                    <a href="{% url 'update_product_request' product.product_id %}">Edit</a> |
+                    <a href="{% url 'delete_product_request' product.product_id %}">Delete</a> |
+                    <a href="{% url 'product_details' product.product_id %}">View Details</a>
+                </td>
+               
+            </tr>
+             {% endfor %}
+        </table>
+
+        {% else %}
+            <p>No products available.</p>
+        {% endif %}
+        
+    {% endblock %}
+
+</body>
+</html>
