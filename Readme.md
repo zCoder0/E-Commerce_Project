@@ -113,7 +113,7 @@ def connect():
 
 1. **Clone repository**
 ```bash
-git clone <repository_url>
+git clone https://github.com/zCoder0/E-Commerce_Project.git
 cd e_commerce
 
 
