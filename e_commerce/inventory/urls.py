@@ -5,6 +5,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 inventory_urlpatterns = [
+    path("admin_login/",views.admin_login ,name='admin_login'),
     path("inventory_management/", views.inventory_management, name="inventory_management"),
     path("add_product/", views.add_product_request, name="add_product_request"),
     path("update_products/<int:product_id>/", views.update_product_request, name="update_product_request"),

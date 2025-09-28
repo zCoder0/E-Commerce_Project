@@ -62,8 +62,21 @@ def inventory_dashboard(request):
         },
     )
 
-#category 
 
+def admin_login(request):
+    if request.method=="POST":
+        user_name = request.POST['user_name']
+        password = request.POST['password']
+
+        if user_name.lower() == "admin" and password.lower()=="admin":
+            return redirect('inventory_dashboard')
+        else:
+            return render(request,"inventory/admin_login.html",{'error':1})
+
+    else:
+        return render(request,"inventory/admin_login.html")
+
+#category 
 def category_management(request):
     if request.method == "GET":
         categories = get_all_categories()

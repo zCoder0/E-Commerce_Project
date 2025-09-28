@@ -7,6 +7,9 @@ user_id = None
 cb = ChatBot()
 cb.train_model()
 
+def index_main(request):
+    return render(request ,"index_main.html" )
+
 def index(request):
     user_id =  request.session.get("user_id",0)
 
