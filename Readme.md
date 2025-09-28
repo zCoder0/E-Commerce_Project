@@ -136,7 +136,8 @@ python manage.py runserver
 ## Inventory Login
 
 
-  user name : admin
-  password : admin
-  
+  - user name : admin
+
+  - password : admin
+
 ---
