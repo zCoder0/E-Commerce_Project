@@ -1,0 +1,103 @@
+/* ===== Base Styles ===== */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f5f6fa;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+/* ===== Hero Section ===== */
+section.bg-light {
+    background: linear-gradient(90deg, #2575fc 0%, #6a11cb 100%);
+    color: #fff;
+}
+
+section.bg-light h1 {
+    font-size: 2.5rem;
+}
+
+section.bg-light p {
+    font-size: 1.2rem;
+}
+
+/* ===== Product Section ===== */
+.card {
+    border-radius: 15px;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.card-img-top {
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    object-fit: cover;
+    height: 200px;
+}
+
+/* Card Title */
+.card-title {
+    font-size: 1.25rem;
+    color: #2575fc;
+}
+
+/* Card Text */
+.card-text {
+    color: #555;
+}
+
+/* Prices */
+.card p del {
+    font-size: 0.9rem;
+}
+
+.card p.text-danger {
+    font-size: 0.95rem;
+}
+
+.card p.text-success {
+    font-size: 1rem;
+}
+
+/* View Details Button */
+.card .btn-primary {
+    background-color: #2575fc;
+    border: none;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.card .btn-primary:hover {
+    background-color: #1a5edc;
+}
+
+/* ===== Footer ===== */
+footer {
+    background-color: #2575fc;
+    color: #fff;
+    padding: 25px 0;
+    text-align: center;
+}
+
+/* ===== Responsive ===== */
+@media(max-width: 768px) {
+    section.bg-light h1 {
+        font-size: 2rem;
+    }
+
+    section.bg-light p {
+        font-size: 1rem;
+    }
+
+    .card-img-top {
+        height: 150px;
+    }
+
+    .card-title {
+        font-size: 1.1rem;
+    }
+}

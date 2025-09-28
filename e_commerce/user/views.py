@@ -1,7 +1,11 @@
 from django.shortcuts import render,redirect
 from user.user_action import *
-
+from e_commerce.chatbot import *
 user_id = None
+
+
+cb = ChatBot()
+cb.train_model()
 
 def index(request):
     user_id =  request.session.get("user_id",0)
@@ -48,7 +52,7 @@ def user_signin(request):
             return render(request ,"user/user_signin.html",{"error":1})
         
     else:
-        return render(request , "user/dhuuser_signin.html")
+        return render(request , "user/user_signin.html")
     
 def profile(request):
 
@@ -60,18 +64,18 @@ def profile(request):
     try:
         if request.method == "GET":
 
-            datas = get_full_details(user_id=user_id)
+            datas = get_full_details(user_id=user_id)[0]
 
             response_data ={
                 "user_id":datas[0],
                 "user_name":datas[1],
                 "user_email":datas[3],
                 "user_mobile":datas[2],
-                "address":datas[7],
-                "city":datas[8],
-                "state":datas[9],
-                "zipcode":datas[10],
-                "country":datas[11]
+                "address":datas[8],
+                "city":datas[9],
+                "state":datas[10],
+                "zipcode":datas[11],
+                "country":datas[12]
             }
 
 
@@ -111,6 +115,15 @@ def profile(request):
         print("Error ",e)
         return None
 
+def add_new_address(request,user_id):
+    try:
+        if request.method == "POST":
+            pass
+
+    except Exception as e:
+        print("Error in add new address : ",e)
+        return False
+    
 def myCart(request):
     return render(request,"user/mycart.html")
 
@@ -158,11 +171,7 @@ def add_cart(request,product_id):
         if not user_id:
             return redirect("user_signin")
         
-        print("Before insert" , user_id , product_id)
-
         flag = insert_cart(user_id,product_id)
-
-        print("After insert")
 
         if flag:
             return redirect("myCart")
@@ -220,12 +229,85 @@ def buy_product(request):
     if not user_id:
         return redirect("user_signin")
     
-    flag = buy_cart_items(user_id)
+    if not get_cart_items(user_id=user_id):
+            return redirect("index")
+
+
+    if request.method=="POST":
+        
+        cart_items = get_cart_items(user_id=user_id)
+        flag = buy_cart_items(request ,cart_items)
+        if flag and updtae_cart_items_status(user_id=user_id):
+            
+            return render(request , "user/success.html")
+        else:
+            return render(request ,'user/buy_product.html',{'error':1})
+    else:
+        details = get_full_details(user_id=user_id)
+
+        user_details=[{
+            "details_id":detail[6],
+            "user_mobile":detail[2],
+            "user_email":detail[3],
+            "shipping_address":detail[8],
+            "shipping_city":detail[9],
+            "shipping_state":detail[10],
+            "shipping_zipcode":detail[11],
+            "shipping_country":detail[12],
+        } for detail in details]
+        if  user_details:
+            return render(request, "user/buy_product.html",{"user_details":user_details})
+        else:
+            return render(request, "user/mycart.html", {"error": 1})    
+
+def myorders(request):
+    
+    user_id = request.session.get("user_id",0)
+
+    if not user_id :
+        return redirect('user_signin')
+    
+    pending_orders = get_all_orders_by_user_id(user_id=user_id , status='pending')
+    delivered_orders = get_all_orders_by_user_id(user_id=user_id , status='delivered')
+
+    return render(request , 'user/myorders.html',{'pending_orders':pending_orders,
+                                                  'delivered_orders':delivered_orders})
+
+def cancel_myorder(request,order_id):
+    user_id = request.session.get("user_id", 0)
+    if not user_id:
+        return redirect("user_signin")
+    
+    flag = cancel_oders_in_pending(user_id,order_id)
 
     if flag:
-        return render(request, "user/buy_success.html")
+        return redirect('myorders')
     else:
-        return render(request, "user/mycart.html", {"error": 1})
+        return render(request,'user/myorders.html',{'error':1})
+
+
+def chatBot(request):
+    try:
+        if request.method=="POST":
+            user_query = request.POST['user_query']
+            products = cb.run(user_query)
+            items=[]
+            for product in products:
+                items.append( get_product_by_id(product_id=product['product_id']))
+            
+            products = get_all_products()
+            return render(request ,'user/index.html',{
+                'chat_items':items,
+                'products':products,
+                'user_query':user_query
+            })
+        
+        else:
+            return redirect('index')
+
+    except Exception as e:
+        print("Error in chatBot views.py ",e )
+        return redirect('index')
 
 def logout(request):
     try:

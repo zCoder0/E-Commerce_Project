@@ -1,0 +1,134 @@
+/* ===== Reset & Base Styles ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body {
+  background: #f8f9fa;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* ===== Container ===== */
+.container {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+/* ===== Headings ===== */
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #222;
+  font-weight: 700;
+}
+
+p {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #555;
+  font-size: 15px;
+}
+
+/* ===== Product Grid ===== */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 25px;
+}
+
+/* ===== Product Card ===== */
+.product-card {
+  background: #fff;
+  border-radius: 15px;
+  padding: 20px;
+  text-align: center;
+  transition: 0.3s ease-in-out;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.08);
+  position: relative;
+}
+
+.product-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+}
+
+.product-card img {
+  max-width: 100%;
+  height: 200px;
+  object-fit: contain;
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+
+.product-card h2 {
+  font-size: 18px;
+  margin-bottom: 10px;
+  color: #222;
+}
+
+.product-card p {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+.product-card .price {
+  font-size: 15px;
+  color: #888;
+  text-decoration: line-through;
+}
+
+/* ===== Discount & Offer ===== */
+.product-card del {
+  color: #999;
+}
+
+.product-card .offer {
+  color: #e63946;
+  font-weight: 600;
+}
+
+.product-card .discount {
+  color: #2a9d8f;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+/* ===== Buttons ===== */
+button {
+  margin-top: 12px;
+  padding: 10px 20px;
+  background: #2575fc;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  background: #1a5edc;
+  transform: translateY(-2px);
+}
+
+button a {
+  text-decoration: none;
+  color: #fff;
+  font-size: 14px;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .product-card {
+    padding: 15px;
+  }
+  .product-card img {
+    height: 160px;
+  }
+}

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suppliers Management | E-Commerce</title>
+
+    <link rel="stylesheet" href="/static/inventory_manage.css">
+</head>
+<body>
+    
+     {% block content %}
+    <!-- Inventory content will go here -->
+        
+          
+        {% include 'inventory/navbar.html' %}
+
+        <h1>Inventory Management</h1>
+        <p>Manage your inventory here. You can add, update, or delete products.</p>
+
+         
+
+        <br><br>
+        <button> <a href="{% url 'add_supplier' %}">Add new supplier</a> </button>
+
+        <br><br>
+        {% if suppliers %}
+        <table>
+            <tr>
+                <td>Supplier Name</td>
+                <th>Supplier Contact Name </th>
+                <th>Phone Number </th>
+                <th>Address</th>
+                <th>City</th>
+                <th>Country</th>
+                <th>Zip code</th>
+                <th>Action</th>
+            </tr>
+
+            
+            {% for supplier in suppliers %}
+            <tr>
+                <td>{{ supplier.supplier_name }}</td>
+                <td>{{ supplier.supplier_contact }}</td>
+                <td>{{ supplier.supplier_mobile}}</td>
+                <td>{{ supplier.address }}</td>
+                <td>{{ supplier.city }}</td>
+                <td>{{ supplier.country }}</td>
+                <td>{{ supplier.zipcode }}</td>
+                <td>
+                <td>
+                    <a href="{% url 'update_supplier_request' supplier.supplier_id %}">Edit</a> |
+                    <a href="{% url 'delete_supplier_request' supplier.supplier_id %}">Delete</a> |
+                </td>
+                </td>
+            </tr>
+             {% endfor %}
+        </table>
+
+        {% else %}
+            <p>No supplier available.</p>
+        {% endif %}
+        
+    {% endblock %}
+
+
+
+</body>
+</html>

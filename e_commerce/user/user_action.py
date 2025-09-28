@@ -66,7 +66,7 @@ def get_full_details(user_id):
         mycon ,mycur =connect()
 
         mycur.execute(sql,val)
-        data = mycur.fetchone()
+        data = mycur.fetchall()
         return data
     
     except Exception as e:
@@ -279,7 +279,8 @@ def get_cart_items(user_id):
                 pd.price - (pd.price * pd.offer/100 ) AS disscount_price,
                 pd.stock,
                 pimg.image_url,
-                cd.quantity
+                cd.quantity,
+                cd.status
             
             FROM cart_details cd
             INNER JOIN product_details pd ON cd.product_id = pd.product_id
@@ -303,7 +304,8 @@ def get_cart_items(user_id):
                 "disscount_price": round(item[6],2),
                 "stock": item[7],
                 "image_url": item[8],   # Assuming the image URL is in the second column of product_images
-                "quantity": item[9]
+                "quantity": item[9],
+                "status":item[10]
         } for item in cart_items]
     
         return cart_list
@@ -350,7 +352,7 @@ def is_item_in_cart(user_id, product_id):
         print("Error in is_item_in_cart: ", e)
         return False,False
 
-def buy_cart_items(user_id):
+def updtae_cart_items_status(user_id):
     try:
         sql = "UPDATE cart_details SET status = 'ordering' WHERE user_id = %s AND status = 'pending'"
         params = (user_id,)
@@ -367,5 +369,141 @@ def buy_cart_items(user_id):
     except Exception as e:
         print("Error in buy_cart_items: ", e)
         return False
-    
 
+def buy_cart_items(request , cart_items):
+    try:
+        shipping_id = request.POST['shipping_add']
+        payment_method = request.POST['payment_method']
+        user_id = request.session.get("user_id",0)
+        
+        details = get_shipping_address(shipping_id)
+
+        sql = """insert  into order_details (user_id , product_id ,cart_id ,quantity ,
+                                                total_amount ,status,shipping_address ,shipping_city , 
+                                                shipping_state ,shipping_country ,shipping_zipcode,payment_method)
+                                                values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
+                                                 """
+        
+        params=[]
+        for items in cart_items:
+            product_id = items['product_id']
+            cart_id = items['cart_id']
+            quantity = items['quantity']
+            total_amount = items['disscount_price']
+
+            params.append((user_id , product_id , cart_id ,quantity , total_amount, "pending" , details['shipping_address'] ,
+                details['shipping_city'] ,details['shipping_state'] ,details['shipping_country'] ,details['shipping_zipcode'],payment_method))
+            
+       
+        mycon,mycur =connect()
+
+        mycur.executemany(sql,params)
+        mycon.commit()
+
+        if mycur.rowcount>0:
+            return True
+        else:
+            return False
+
+    except Exception as e:
+        print("Error in buy cart items : ",e)
+        return False
+
+def get_all_orders_by_user_id(user_id,status="pending"):
+    try:
+        sql="""
+            SELECT 
+		od.product_id,
+		pd.product_name,
+		pimg.image_url,
+		od.quantity,
+		od.total_amount,
+		od.order_date,
+		od.`status`,
+		od.order_id
+
+            from order_details od 
+
+            inner join product_details pd on
+
+                pd.product_id = od.product_id
+
+            inner join product_images pimg on
+
+                pimg.product_id = od.product_id
+            
+            where od.user_id =%s AND od.status=%s
+
+             
+            """
+        params=(
+            user_id , status 
+        )
+
+        mycon,mycur= connect()
+
+        mycur.execute(sql,params)
+        orders = mycur.fetchall()
+
+        order_details=[
+            {
+                'product_id':order[0],
+                'product_name':order[1],
+                'image_url':order[2],
+                'product_price':order[4],
+                'product_quantity':order[3],
+                'ordered_date':order[5],
+                'status':order[6],
+                'order_id':order[7]
+            }
+            for order in orders
+        ]
+        return order_details
+    except Exception as e:
+        print("Error in get all orders by user id : ",e)
+        return False
+
+def cancel_oders_in_pending(user_id,order_id,status='pending'):
+    try:
+        sql = "delete from order_details where user_id=%s and status=%s and order_id=%s"
+        params=(
+            user_id,status,order_id
+        )
+
+        print(params)
+        mycon ,mycur = connect()
+        mycur.execute(sql,params)
+        mycon.commit()
+
+        if mycur.rowcount>0:
+            return True
+        else:
+            return False
+        
+    except Exception as e:
+        print("Error in cancel orders in pending : ",e)
+        return False
+
+def get_shipping_address(details_id):
+    try:
+        sql = "select * from user_details where details_id=%s"
+        params=(details_id,)
+
+        mycon ,mycur = connect()
+        mycur.execute(sql,params)
+        data = mycur.fetchone()
+
+        if data:
+            return {
+                'shipping_address':data[2],
+                'shipping_city':data[3],
+                'shipping_state':data[4],
+                'shipping_country':data[6],
+                'shipping_zipcode':data[5],
+            }
+        else:
+            return False
+
+    except Exception as e:
+        print("Error in get shipping address : ",e)
+        return False

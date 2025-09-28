@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Orders | E-Commerce</title>
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="/static/myorders.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    {% include 'user/navbar.html' %}
+
+    <div class="container">
+        <h1 class="page-title"><i class="fas fa-box"></i> My Orders</h1>
+
+        <!-- Pending Orders -->
+        <section class="orders-section">
+            <h2>Pending Orders</h2>
+            {% if pending_orders %}
+            <div class="orders-table-container">
+                <table class="orders-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Ordered Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for orders in pending_orders %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'view_product_details' orders.product_id %}">
+                                    <img src="/{{ MEDIA_URL }}{{ orders.image_url }}" alt="{{ orders.product_name }}">
+                                </a>
+                            </td>
+                            <td>{{ orders.product_name }}</td>
+                            <td>${{ orders.product_price }}</td>
+                            <td>{{ orders.product_quantity }}</td>
+                            <td>{{ orders.ordered_date }}</td>
+                            <td><span class="status pending">{{ orders.status }}</span></td>
+                            <td>
+                                <a href="{% url 'cancel_myorder' orders.order_id %}" class="btn-cancel">
+                                    <i class="fas fa-times-circle"></i> Cancel
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+                <p class="no-orders">You have no pending orders.</p>
+            {% endif %}
+        </section>
+
+        <!-- Delivered Orders -->
+        <section class="orders-section">
+            <h2>Order History</h2>
+            {% if delivered_orders %}
+            <div class="orders-table-container">
+                <table class="orders-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Ordered Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for orders in delivered_orders %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'view_product_details' orders.product_id %}">
+                                    <img src="/{{ MEDIA_URL }}{{ orders.image_url }}" alt="{{ orders.product_name }}">
+                                </a>
+                            </td>
+                            <td>{{ orders.product_name }}</td>
+                            <td>${{ orders.product_price }}</td>
+                            <td>{{ orders.product_quantity }}</td>
+                            <td>{{ orders.ordered_date }}</td>
+                            <td><span class="status delivered">Delivered</span></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+                <p class="no-orders">No order history found.</p>
+            {% endif %}
+        </section>
+
+        {% if error %}
+        <script>alert('Failed')</script>
+        {% endif %}
+    </div>
+
+    {% include 'user/footer.html' %}
+
+</body>
+</html>

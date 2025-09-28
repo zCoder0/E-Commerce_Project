@@ -1,0 +1,99 @@
+/* ===== Base Styles ===== */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f5f6fa;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+}
+
+/* ===== Heading ===== */
+h1 {
+    color: #2575fc;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+h2 {
+    color: #1a1a1a;
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+}
+
+/* ===== Product Details Container ===== */
+div {
+    max-width: 700px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 25px 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+/* ===== Product Image ===== */
+div img {
+    display: block;
+    margin: 0 auto 20px auto;
+    border-radius: 12px;
+    max-width: 100%;
+    height: auto;
+}
+
+/* ===== Product Info ===== */
+div p {
+    font-size: 1rem;
+    margin-bottom: 12px;
+    color: #555;
+}
+
+div p strong {
+    color: #2575fc;
+}
+
+/* ===== Original Price ===== */
+del {
+    color: #999;
+    font-size: 0.95rem;
+}
+
+/* ===== Back Button ===== */
+button {
+    display: block;
+    background-color: #2575fc;
+    color: #fff;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 25px;
+    cursor: pointer;
+    margin: 20px auto 0 auto;
+    transition: 0.3s;
+}
+
+button:hover {
+    background-color: #1a5edc;
+}
+
+button a {
+    text-decoration: none;
+    color: #fff;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+    div {
+        padding: 20px;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    div p {
+        font-size: 0.95rem;
+    }
+
+    button {
+        width: 100%;
+    }
+}

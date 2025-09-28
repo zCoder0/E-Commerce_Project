@@ -4,19 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Category Management | E-Commerce</title>
+    
+    <link rel="stylesheet" href="/static/inventory_manage.css">
 </head>
 <body>
     
+    
+    {% include 'inventory/navbar.html' %}
     <h1>Category Management</h1>
        
-          <div class="nav">
-            <a href="{% url 'inventory_home' %}">Inventory Home</a> |
-            <a href="{% url 'inventory_management' %}">Manage Inventory</a> |
-            <a href="{% url 'category_management' %}">Categories</a> |
-            <a href="#">Suppliers</a> |
-            <a href="#">Stock Levels</a> |
-            <a href="#">Reports</a>
-        </div>
 
     <br><br>
     <button><a href="{% url 'add_category_request' %}">Add New Category</a></button>

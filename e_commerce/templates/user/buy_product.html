@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | E-Commerce</title>
+
+    <!-- External CSS -->     
+     <link rel="stylesheet" href="/static/buy_product.css">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+
+    {% include 'user/navbar.html' %}
+
+    <div class="checkout-container">
+
+        <h1 class="page-title"><i class="fas fa-shopping-bag"></i> Checkout</h1>
+
+        <div class="checkout-card">
+
+            <!-- Shipping Address -->
+            <div class="checkout-section">
+                <h2><i class="fas fa-map-marker-alt"></i> Shipping Address</h2>
+                <form method="post" class="checkout-form">
+                    {% csrf_token %}
+                    <select name="shipping_add" required>
+                        {% for user in user_details %}
+                        <option value="{{ user.details_id }}">
+                            {{ user.shipping_address }}, {{ user.shipping_city }}, {{ user.shipping_state }}, {{ user.shipping_country }}, {{ user.shipping_zipcode }}
+                        </option>
+                        {% endfor %}
+                    </select>
+
+                    <!-- Payment Method -->
+                    <h2><i class="fas fa-credit-card"></i> Payment Method</h2>
+                    <select name="payment_method" required>
+                        <option value="upi">UPI</option>
+                        <option value="cash_on_delivery">Cash on Delivery</option>
+                    </select>
+
+                    <!-- Buy Now Button -->
+                    <button type="submit" class="btn-buy">
+                        <i class="fas fa-check-circle"></i> Confirm & Buy
+                    </button>
+
+                    {% if error %}
+                    <p class="error-msg">Failed to process your order. Please try again.</p>
+                    {% endif %}
+                </form>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

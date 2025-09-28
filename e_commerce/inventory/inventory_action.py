@@ -3,6 +3,7 @@ import os
 from django.conf import settings
 
 #Inventory Actions
+
 def add_product(request):
     try:
         sql = "insert into product_details (product_name, price ,offer, stock, description,category_id,supplier_id) values (%s,%s, %s, %s, %s,%s,%s)"
@@ -140,7 +141,7 @@ def get_product_by_id(product_id):
 
 def update_product(request,product_id):
     try:
-        sql = "update products_details set product_name=%s, price=%s,offer=%s, stock=%s, description=%s, image=%s where product_id=%s"
+        sql = "update product_details set product_name=%s, price=%s,offer=%s, stock=%s, description=%s where product_id=%s"
 
         params=(
             request.POST['product_name'],
@@ -148,7 +149,6 @@ def update_product(request,product_id):
             int(request.POST['offer']),
             request.POST['stock'],
             request.POST['description'],
-            request.FILES.get('image').name if request.FILES.get('image') else None,
             product_id
         )
 
@@ -207,7 +207,9 @@ def delete_product_image_file(image_name):
         print(f"Error deleting product image file: {e}")
         return False
 
+
 #Category and Supplier Actions
+
 def get_all_categories():
     try:
         sql = "select * from category_details"
@@ -302,6 +304,9 @@ def update_category(request,category_id):
         print(f"Error updating category: {e}")
         return False
     
+
+#supplier 
+
 def get_all_suppliers():
     try:
         sql = "select * from supplier_details"
@@ -314,4 +319,203 @@ def get_all_suppliers():
     except Exception as e:
         print(f"Error retrieving suppliers: {e}")
         return []
+
+def get_supplier_by_id(supplier_id):
+    try:
+        sql = "select * from supplier_details where supplier_id=%s"
+        params=(
+            supplier_id,
+        )
+        mycon , mycur = connect()
+        mycur.execute(sql,params)
+        supplier= mycur.fetchone()
+        mycur.close()
+        return supplier
     
+    except Exception as e:
+        print(f"Error retrieving suppliers: {e}")
+        return []
+
+def add_suppliers(request):
+    try:
+        sql="""
+            insert into supplier_details (
+                supplier_name,
+                contact_name,
+                address,
+                city,
+                postal_code ,
+                country,
+                phone
+            )
+            values(%s,%s,%s,%s,%s,%s,%s)
+        """
+        params=(
+            request.POST['supplier_name'],
+            request.POST['supplier_contact_name'],
+            request.POST['address'],
+            request.POST['city'],
+            request.POST['zipcode'],
+            request.POST['country'],
+            request.POST['mobile'],
+        )
+        mycon,mycur =connect()
+        mycur.execute(sql,params)
+        mycon.commit()
+
+        if mycur.rowcount>0:
+            return True
+        else:
+            return
+    except Exception as e:
+        print("Error in add suppliers : ",e)
+        return False
+
+def update_supplier(request,supplier_id):
+    try:
+        sql="""update supplier_details set supplier_name=%s , 
+                                         contact_name=%s,
+                                         address=%s,
+                                         city=%s,
+                                         postal_code =%s,
+                                         country=%s,
+                                         phone=%s
+                where supplier_id=%s"""
+
+        params =(
+            request.POST['supplier_name'],
+            request.POST['supplier_contact_name'],
+            request.POST['address'],
+            request.POST['city'],
+            request.POST['zipcode'],
+            request.POST['country'],
+            request.POST['mobile'],
+            supplier_id
+        )
+        mycon,mycur =connect()
+        mycur.execute(sql,params)
+        mycon.commit()
+
+        if mycur.rowcount>0:
+            return True
+        else:
+            return
+
+    except Exception as e:
+        print("Error in update suppliers : ",e)
+        return False
+
+def delete_supplier(supplier_id):
+    try:
+        sql= "delete from supplier_details where supplier_id=%s"
+        params=(
+            supplier_id,
+        )
+        mycon ,mycur =connect()
+        mycur.execute(sql,params)
+        mycon.commit()
+        if mycur.rowcount>0:
+            return True
+        else:
+            return False
+    except Exception as e:
+        print("Error in delete suppliers : ",e)
+        return False
+
+
+#Stock level
+
+def get_all_stock():
+
+    try:
+        sql="""
+            SELECT 
+                pd.product_name,
+                cd.category_name,
+                sd.supplier_name,
+                sd.address,
+                SUM(pd.stock) AS total_stock,
+                COUNT(pd.product_id) AS total_products
+            FROM product_details pd
+            INNER JOIN category_details cd 
+                ON cd.category_id = pd.category_id
+            INNER JOIN supplier_details sd 
+                ON sd.supplier_id = pd.supplier_id
+            GROUP BY cd.category_name ,sd.supplier_name ,sd.address,pd.product_name
+            ORDER BY total_stock DESC;
+
+        """
+        mycon , mycur = connect()
+        mycur.execute(sql)
+        stocks = mycur.fetchall()
+        
+        stock_details=[
+            {
+                "product_name":stock[0],
+                "supplier_name":stock[2],
+                "category_name":stock[1],
+                "address":stock[3],
+                "total_stock":stock[4],
+                "total_products":stock[5],
+
+            }
+            for stock in stocks
+        ]
+        
+        mycur.close()
+        return stock_details
+    
+    except Exception as e:
+        print(f"Error get all stocks : {e}")
+        return False
+    
+def get_stock_by_category(category_id):
+
+    try:
+        sql = """
+
+           SELECT 
+                pd.product_name,
+                cd.category_name,
+                sd.supplier_name,
+                sd.address,
+                SUM(pd.stock) AS total_stock,
+                COUNT(pd.product_id) AS total_products
+            FROM product_details pd
+            INNER JOIN category_details cd 
+                ON cd.category_id = pd.category_id
+            INNER JOIN supplier_details sd 
+                ON sd.supplier_id = pd.supplier_id
+            where cd.category_id = %s
+            GROUP BY cd.category_name ,sd.supplier_name ,sd.address,pd.product_name
+            ORDER BY total_stock DESC;
+
+        """
+        params=(
+            category_id,
+        )
+
+        mycon , mycur = connect()
+        mycur.execute(sql,params)
+        stocks = mycur.fetchall()
+
+        
+        stock_details=[
+            {
+                "product_name":stock[0],
+                "supplier_name":stock[2],
+                "category_name":stock[1],
+                "address":stock[3],
+                "total_stock":stock[4],
+                "total_products":stock[5],
+
+            }
+            for stock in stocks
+        ]
+        
+        mycur.close()
+        return stock_details
+    
+    except Exception as e:
+        print(f"Error in get stock details by category : {e}")
+        return []

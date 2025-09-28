@@ -1,0 +1,122 @@
+/* ===== Base Styles ===== */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f5f6fa;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+/* ===== Container & Heading ===== */
+h1 {
+    color: #2575fc;
+    font-size: 2rem;
+    margin: 20px 0 10px 20px;
+}
+
+p {
+    margin: 0 0 20px 20px;
+    color: #555;
+}
+
+/* ===== Add Product Button ===== */
+button a {
+    display: inline-block;
+    text-decoration: none;
+    color: #fff;
+    background-color: #2575fc;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+button a:hover {
+    background-color: #1a5edc;
+}
+
+/* ===== Table Styles ===== */
+table {
+    width: 95%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+thead tr {
+    background-color: #2575fc;
+    color: #fff;
+    text-align: left;
+}
+
+thead th, tbody td {
+    padding: 12px 15px;
+}
+
+tbody tr {
+    border-bottom: 1px solid #ddd;
+    transition: background 0.3s;
+}
+
+tbody tr:hover {
+    background-color: #f0f4ff;
+}
+
+/* Images */
+tbody img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+/* Action Links */
+td a {
+    text-decoration: none;
+    color: #2575fc;
+    font-weight: 500;
+    margin-right: 8px;
+    transition: 0.3s;
+}
+
+td a:hover {
+    color: #1a5edc;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+    table, thead, tbody, th, td, tr {
+        display: block;
+    }
+
+    thead tr {
+        display: none;
+    }
+
+    tbody td {
+        padding: 10px;
+        position: relative;
+        text-align: right;
+    }
+
+    tbody td::before {
+        content: attr(data-label);
+        float: left;
+        font-weight: 600;
+    }
+
+    tbody img {
+        width: 60px;
+        height: 60px;
+    }
+
+    button a {
+        width: 100%;
+        display: block;
+        text-align: center;
+        margin-bottom: 15px;
+    }
+}
