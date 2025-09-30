@@ -62,6 +62,47 @@
             {% endif %}
         </section>
 
+
+        <!--Shipped Orders-->
+        <section class="orders-section">
+            <h2>Shipped Orders</h2>
+            {% if shipped_orders %}
+            <div class="orders-table-container">
+                <table class="orders-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Ordered Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for orders in shipped_orders %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'view_product_details' orders.product_id %}">
+                                    <img src="/media/{{ orders.images}}" alt="{{ orders.product_name }}">
+                                </a>
+                            </td>
+                            <td>{{ orders.product_name }}</td>
+                            <td>${{ orders.product_price }}</td>
+                            <td>{{ orders.product_quantity }}</td>
+                            <td>{{ orders.ordered_date }}</td>
+                            <td><span class="status pending">{{ orders.status }}</span></td>
+                            
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+                <p class="no-orders">You have no shipped_orders orders.</p>
+            {% endif %}
+        </section>
+
         <!-- Delivered Orders -->
         <section class="orders-section">
             <h2>Order History</h2>
@@ -83,7 +124,7 @@
                         <tr>
                             <td>
                                 <a href="{% url 'view_product_details' orders.product_id %}">
-                                    <img src="/{{ MEDIA_URL }}{{ orders.image_url }}" alt="{{ orders.product_name }}">
+                                    <img src="/media/{{ orders.images }}" alt="{{ orders.product_name }}">
                                 </a>
                             </td>
                             <td>{{ orders.product_name }}</td>

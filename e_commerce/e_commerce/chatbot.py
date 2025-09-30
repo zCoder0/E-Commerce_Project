@@ -33,7 +33,6 @@ class CollectDatas:
                     "category_name"
                 )
             )
-            print(self.product_details)
         except Exception as e:
             print("Error in Collect Database ", e)
             self.product_details = None

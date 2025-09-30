@@ -10,6 +10,9 @@ user_id = None
 cb = ChatBot()
 cb.train_model()
 
+def someThingWrong(request):
+    return render(request,'error.html')
+
 def PageNotFound(request):
     return render(request , 'pagenotfound.html')
 
@@ -17,54 +20,62 @@ def index_main(request):
     return render(request ,"index_main.html" )
 
 def index(request):
-    user_id =  request.session.get("user_id",0)
+    try:
+        user_id =  request.session.get("user_id",0)
 
-    if not user_id:
-        return redirect("user_signin")
-    
-    products = get_all_products()
-    return render(request , "user/index.html" ,{"products":products})
+        if not user_id:
+            return redirect("user_signin")
+        
+        products = get_all_products()
+        return render(request , "user/index.html" ,{"products":products})
+    except Exception as e:
+        return redirect("someThingWrong")
 
 def user_signup(request):
+    try:
+        if request.method == "POST":
+            user_name = request.POST['user_name']
+            user_email = request.POST['user_email']
+            user_password = request.POST['user_password']
+            user_mobile = request.POST['user_mobile']
 
-    if request.method == "POST":
-        user_name = request.POST['user_name']
-        user_email = request.POST['user_email']
-        user_password = request.POST['user_password']
-        user_mobile = request.POST['user_mobile']
-
-        user = UserRegister.objects.create(
-                            user_name= user_name , 
-                             user_mobile=user_mobile,
-                             user_email=user_email,
-                             user_password=user_password)
-        user.save()
-        
-        if user.id:
-            return redirect("user_signin")
+            user = UserRegister.objects.create(
+                                user_name= user_name , 
+                                user_mobile=user_mobile,
+                                user_email=user_email,
+                                user_password=user_password)
+            user.save()
+            
+            if user.id:
+                return redirect("user_signin")
+            else:
+                return render(request ,"user/user_signup.html",{"error":1})
+            
         else:
-            return render(request ,"user/user_signup.html",{"error":1})
-        
-    else:
-        return render(request , "user/user_signup.html")
+            return render(request , "user/user_signup.html")
+    except Exception as e:
+        return redirect("someThingWrong")
 
 def user_signin(request):
-    if request.method == "POST":
-        user_email = request.POST['user_email']
-        user_password = request.POST['user_password']
+    try:
+        if request.method == "POST":
+            user_email = request.POST['user_email']
+            user_password = request.POST['user_password']
 
-        data = UserRegister.objects.get(user_email = user_email ,
-                                        user_password = user_password)
-        
-        if data :
-            request.session["user_id"] = data.id
-            return redirect("index")
-        
+            data = UserRegister.objects.get(user_email = user_email ,
+                                            user_password = user_password)
+            
+            if data :
+                request.session["user_id"] = data.id
+                return redirect("index")
+            
+            else:
+                return render(request ,"user/user_signin.html",{"error":1})
+            
         else:
-            return render(request ,"user/user_signin.html",{"error":1})
-        
-    else:
-        return render(request , "user/user_signin.html")
+            return render(request , "user/user_signin.html")
+    except Exception as e:
+        return redirect("someThingWrong")
     
 def profile(request):
     user_id = request.session.get("user_id", 0)
@@ -105,7 +116,7 @@ def profile(request):
 
     except Exception as e:
         print("Error ", e)
-        return redirect("index")
+        return redirect("someThingWrong")
 
 def add_new_address(request,user_id):
     try:
@@ -114,52 +125,57 @@ def add_new_address(request,user_id):
 
     except Exception as e:
         print("Error in add new address : ",e)
-        return False
+        return redirect("someThingWrong")
 
 
 #view prdocts
 
 def view_product_details(request,product_id):
-    product = get_product_by_id(product_id)
-    reviews  = get_review_product_id(product_id)
-    avg_rev=None
-    if reviews:
-       avg_rev = round(sum(rev['rating'] for rev in reviews) / len(reviews) if reviews else 1  ,2)
+    try:
+        product = get_product_by_id(product_id)
+        reviews  = get_review_product_id(product_id)
+        avg_rev=None
+        if reviews:
+            avg_rev = round(sum(rev['rating'] for rev in reviews) / len(reviews) if reviews else 1  ,2)
 
-    if request.method == "POST":
-  
-        flag = insert_review(request)
+        if request.method == "POST":
+            flag = insert_review(request)
+            if flag:
+                return redirect("view_product_details" , product_id=product_id)
 
-        if flag:
-                
-            return redirect("view_product_details" , product_id=product_id)
+            else: 
+                return render(request , "user/product_details.html" ,{"error":1})
         
-        else: 
-            return render(request , "user/product_details.html" ,{"error":1})
-    
-    else:
-
-        return render(request , "user/product_details.html" ,{"product":product , 
-                                                              "reviews":reviews,
-                                                              "count_review":len(reviews),
-                                                              "avg_review":avg_rev
-                                                             })
+        else:
+            return render(request , "user/product_details.html" ,{"product":product , 
+                                                                "reviews":reviews,
+                                                                "count_review":len(reviews),
+                                                                "avg_review":avg_rev
+                                                               })
+        
+    except Exception as e:
+        return redirect("someThingWrong")
 
 
 #cart
 
 def myCart(request):
-    if request.method == "GET":
-        user_id = request.session.get("user_id",0)
 
-        if not user_id:
-            return redirect("user_signin")
-        
-        cart_items = get_cart_items(user_id)
-        
-        total_amount = round(sum(item['disscount_price']* item['quantity'] for item in cart_items),2)
+    try:
+        if request.method == "GET":
+            user_id = request.session.get("user_id",0)
 
-        return render(request, "user/mycart.html", {"cart_items": cart_items, "total_amount": total_amount})
+            if not user_id:
+                return redirect("user_signin")
+            
+            cart_items = get_cart_items(user_id)
+            
+            total_amount = round(sum(item['disscount_price']* item['quantity'] for item in cart_items),2)
+
+            return render(request, "user/mycart.html", {"cart_items": cart_items, "total_amount": total_amount})
+    except Exception as e:
+        return redirect("someThingWrong")
+    
 
 def add_cart(request,product_id):
     try:
@@ -177,7 +193,7 @@ def add_cart(request,product_id):
         
     except Exception as e:
         print("Error in add_cart view: ", e)
-        return render(request, "user/product_details.html",{"error":1})
+        return redirect("someThingWrong")
 
 def remove_cart_item(request, cart_id):
     try:
@@ -194,8 +210,9 @@ def remove_cart_item(request, cart_id):
             return render(request, "user/mycart.html", {"error": 1})
 
     except Exception as e:
+
         print("Error in delete_cart_item view: ", e)
-        return render(request, "user/mycart.html", {"error": 1})
+        return redirect("someThingWrong")
 
 def update_cart_item(request, cart_id):
     try:
@@ -219,62 +236,76 @@ def update_cart_item(request, cart_id):
             return redirect("myCart")
 
     except Exception as e:
+
         print("Error in update_cart_item view: ", e)
-        return render(request, "user/mycart.html", {"error": 1})
+        return redirect("someThingWrong")
 
 
 #buy 
 
 def buy_product(request):
-    user_id = request.session.get("user_id", 0)
-    if not user_id:
-        return redirect("user_signin")
-    
-    if not get_cart_items(user_id=user_id):
-            return redirect("index")
-
-    if request.method=="POST":
+    try:
+        user_id = request.session.get("user_id", 0)
+        if not user_id:
+            return redirect("user_signin")
         
-        cart_items = get_cart_items(user_id=user_id)
-        flag = buy_cart_items(request ,cart_items)
+        if not get_cart_items(user_id=user_id):
+                return redirect("index")
 
-        if flag :
-            return render(request , "user/success.html")
-        else:
-            return render(request ,'user/buy_product.html',{'error':1})
-    else:
-        user_details= get_full_details(uid=user_id)
+        if request.method=="POST":
+            
+            cart_items = get_cart_items(user_id=user_id)
+            flag = buy_cart_items(request ,cart_items)
 
-        if  user_details:
-            return render(request, "user/buy_product.html",{"user":user_details})
+            if flag :
+                return render(request , "user/success.html")
+            else:
+                return render(request ,'user/buy_product.html',{'error':1})
         else:
-            return render(request, "user/mycart.html", {"error": 1})    
+            user_details= get_full_details(uid=user_id)
+
+            if  user_details:
+                return render(request, "user/buy_product.html",{"user":user_details})
+            else:
+                return render(request, "user/mycart.html", {"error": 1})  
+    except Exception as e:
+        return redirect("someThingWrong")
+
 
 def myorders(request):
     
-    user_id = request.session.get("user_id",0)
+    try:
+        user_id = request.session.get("user_id",0)
 
-    if not user_id :
-        return redirect('user_signin')
+        if not user_id :
+            return redirect('user_signin')
+        
+        pending_orders = get_all_orders_by_user_id(user_id=user_id , status='pending')
+        shipped_orders = get_all_orders_by_user_id(user_id=user_id , status='shipped')
+        delivered_orders = get_all_orders_by_user_id(user_id=user_id , status='confirmed')
+
+        return render(request , 'user/myorders.html',{'pending_orders':pending_orders,
+                                                    'delivered_orders':delivered_orders,
+                                                    "shipped_orders":shipped_orders})
     
-    pending_orders = get_all_orders_by_user_id(user_id=user_id , status='pending')
-    delivered_orders = get_all_orders_by_user_id(user_id=user_id , status='delivered')
-
-    return render(request , 'user/myorders.html',{'pending_orders':pending_orders,
-                                                  'delivered_orders':delivered_orders})
+    except Exception as e:
+        return redirect("someThingWrong")
 
 def cancel_myorder(request,order_id):
-    user_id = request.session.get("user_id", 0)
-    if not user_id:
-        return redirect("user_signin")
+    try:
+        user_id = request.session.get("user_id", 0)
+        if not user_id:
+            return redirect("user_signin")
 
-    flag = cancel_orders_in_pending(user_id,order_id)
+        flag = cancel_orders_in_pending(user_id,order_id)
 
-    if flag:
-        return redirect('myorders')
-    else:
-        return render(request,'user/myorders.html',{'error':1})
-
+        if flag:
+            return redirect('myorders')
+        else:
+            return render(request,'user/myorders.html',{'error':1})
+        
+    except Exception as e:
+        return redirect("someThingWrong")
 
 #chat bot
 
@@ -289,7 +320,6 @@ def chatBot(request):
                 'products':None,
                 'user_query':user_query
                 })
-            
             items=[]
             for product in products:
                 items.append( get_product_by_id(product_id=product['product_id']))
@@ -306,7 +336,7 @@ def chatBot(request):
 
     except Exception as e:
         print("Error in chatBot views.py ",e )
-        return redirect('index')
+        return redirect("someThingWrong")
 
 
 #logout
@@ -315,5 +345,5 @@ def logout(request):
     try:
         del request.session["user_id"]
     except KeyError:
-        pass
+        return redirect("someThingWrong")
     return redirect("user_signin")

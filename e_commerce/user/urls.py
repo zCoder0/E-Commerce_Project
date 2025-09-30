@@ -18,4 +18,5 @@ user_urlpatterns = [
     path("myorders/",views.myorders,name="myorders"),
     path('cancel_myorder/<int:order_id>',views.cancel_myorder,name='cancel_myorder'),
     path("logout",views.logout,name="logout"),
+    
 ]

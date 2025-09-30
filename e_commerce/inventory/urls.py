@@ -26,6 +26,8 @@ inventory_urlpatterns = [
     path("update_supplier/<int:supplier_id>/", views.update_supplier_request, name="update_supplier_request"),
     path("delete_supplier_request/<int:supplier_id>/", views.delete_supplier_request, name="delete_supplier_request"),
 
+#orders
+    path('manage_orders/',views.manage_orders,name='manage_orders'),
 #stock
     path("inventory_dashboard/",views.inventory_dashboard ,name='inventory_dashboard'),
     path("export_stock_csv/" ,views.export_stock_csv ,name="export_stock_csv"),

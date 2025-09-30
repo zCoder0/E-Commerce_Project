@@ -6,7 +6,7 @@ from inventory.models import *
 from django.shortcuts import get_object_or_404
 from django.conf import settings
 import os
-
+from user.models import *
 from django.db.models import Sum, Count
 
 
@@ -134,8 +134,12 @@ def update_product(request, product_id):
         product.offer = int(request.POST['offer'])
         product.stock = int(request.POST['stock'])
         product.description = request.POST['description']
+
+        
+
         product.save()
         return True
+    
     except ProductDetails.DoesNotExist:
         print("Product not found.")
         return False
@@ -348,7 +352,95 @@ def delete_supplier(supplier_id):
         return False
 
 
-#Stock level
+#Order level
+
+def get_all_orders():
+    try:
+        orders = OrderDetails.objects.select_related("user", "product").filter(
+            status='pending'
+        )
+
+        order_details = [
+            {
+                "order_id": order.id,
+                "product_id": order.product.id,
+                "product_name": order.product.product_name,
+                "user_id": order.user.id,
+                "user_name": order.user.user_name,
+                "user_email": order.user.user_email,
+                "user_mobile": order.user.user_mobile,
+                "quantity": order.quantity,
+                "total_amount": float(order.total_amount),
+                "order_date": order.order_date,
+                "address": order.shipping_address,
+                "city": order.shipping_city,
+                "state": order.shipping_state,
+                "country": order.shipping_country,
+                "zipcode": order.shipping_zipcode,
+                "payment_method": order.payment_method,
+                "status": order.status,
+            }
+            for order in orders
+        ]
+        return order_details
+
+    except Exception as e:
+        print("Error in get_all_orders:", e)
+        return None
+
+def get_order_by_area(request):
+    try:
+        area_code = request.POST.get("area_code")
+        orders = OrderDetails.objects.select_related("user", "product").filter(
+            shipping_zipcode=area_code,
+            status='pending'
+        )
+
+        order_details = [
+            {
+                "order_id": order.id,
+                "product_id": order.product.id,
+                "product_name": order.product.product_name,
+                "user_id": order.user.id,
+                "user_name": order.user.user_name,
+                "user_email": order.user.user_email,
+                "user_mobile": order.user.user_mobile,
+                "quantity": order.quantity,
+                "total_amount": float(order.total_amount),
+                "order_date": order.order_date,
+                "address": order.shipping_address,
+                "city": order.shipping_city,
+                "state": order.shipping_state,
+                "country": order.shipping_country,
+                "zipcode": order.shipping_zipcode,
+                "payment_method": order.payment_method,
+                "status": order.status,
+            }
+            for order in orders
+        ]
+        return order_details
+
+    except Exception as e:
+        print("Error in get_order_by_area:", e)
+        return None
+
+def update_order_status(request):
+    try:
+        order_id = int(request.POST['order_id'])
+        status =  request.POST['change_status']
+
+        print(order_id , status)
+        detais = OrderDetails.objects.get(
+            id=order_id
+        )
+        detais.status =status
+        detais.save()
+        return True
+
+    except Exception as e:
+        print("Error in update_order_status ",e)
+        return None
+#Stock
 
 def get_all_stock():
     try:
