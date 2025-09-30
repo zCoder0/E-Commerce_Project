@@ -24,8 +24,9 @@
         <h1>Products</h1>
         <div class="product-grid">
             {% for product in products %}
+            
             <div class="product-card">
-                <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                <img src="/media/{{ product.images}}" alt="/media/{{ product.images}}">
                 <h2>{{ product.name }}</h2>
                 <p>{{ product.description|truncatewords:20 }}</p>
                 <p class="price">${{ product.price }}</p>

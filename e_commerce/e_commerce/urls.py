@@ -27,6 +27,7 @@ urlpatterns =[
     path('',views.index_main,name=''),
     path('index_main.html' ,views.index_main,name='index'),
     path('admin/', admin.site.urls),
+    path('pagenotfound/',views.PageNotFound,name='PageNotFound'),
 ]
 
 # Add your user and inventory urls

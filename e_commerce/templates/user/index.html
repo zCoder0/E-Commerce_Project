@@ -35,7 +35,7 @@
         {% for product in products %}
         <div class="col-lg-3 col-md-4 col-sm-6">
           <div class="card h-100 shadow-sm">
-            <img src="/{{MEDIA_URL}}{{ product.image_url }}" class="card-img-top p-3" alt="{{ product.product_name }}">
+            <img src="/media/{{ product.images }}" class="card-img-top p-3" alt="{{ product.product_name }}">
             <div class="card-body text-center">
               <h5 class="card-title">{{ product.product_name }}</h5>
               <p class="card-text text-muted small">{{ product.description|truncatewords:15 }}</p>
@@ -72,7 +72,7 @@
       {% if chat_items %}
         {% for product in chat_items %}
         <div class="chat-product-card mb-2">
-          <img src="/{{MEDIA_URL}}{{ product.image_url }}" alt="{{ product.product_name }}" class="chat-product-img">
+          <img src="/media/{{ product.images}}" alt="{{ product.product_name }}" class="chat-product-img">
           <div class="chat-product-info">
             <h6 class="mb-1">{{ product.product_name }}</h6>
             <p class="mb-1 text-danger fw-bold">Offer: {{ product.offer }}%</p>

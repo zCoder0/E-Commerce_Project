@@ -29,12 +29,12 @@
         </tr>
         {% for category in categories %}
         <tr>
-            <td>{{ category.category_id }}</td>
+            <td>{{ category.id }}</td>
             <td>{{ category.category_name }}</td>
             <td>{{ category.description }}</td>
             <td>
-                <a href="{% url 'update_category_request' category.category_id %}">Edit</a> |
-                <a href="{% url 'delete_category_request' category.category_id %}">Delete</a>
+                <a href="{% url 'update_category_request' category.id %}">Edit</a> |
+                <a href="{% url 'delete_category_request' category.id %}">Delete</a>
             </td>
         </tr>
         {% endfor %}

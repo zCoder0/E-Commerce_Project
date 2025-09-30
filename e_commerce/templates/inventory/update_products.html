@@ -12,7 +12,7 @@
     <h1>Update the Product</h1>
     <form method="post">
         {% csrf_token %}
-        <img src="/{{MEDIA_IRL}}{{product.image_url}}" width="100" height="100" alt=""><br><br>
+        <td><img src="/media/{{product.images}}"  width="100"></td>
 
         <label for="product_image">Product Image</label>
         <input type="file" id="product_image" name="product_image" value="{{product.image}}" accept="image/*"><br><br>

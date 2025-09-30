@@ -1,4 +1,3 @@
-from e_commerce.database import connect
 import nltk 
 from nltk.stem import WordNetLemmatizer
 from nltk.corpus import stopwords
@@ -6,6 +5,8 @@ import re
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import numpy as np
+from django.db.models import F
+from inventory.models import *
 
 # Download required nltk resources
 nltk.download('punkt')
@@ -13,40 +14,35 @@ nltk.download('stopwords')
 nltk.download('wordnet')
 nltk.download('averaged_perceptron_tagger')
 
+
 class CollectDatas:
     def __init__(self):
-        self.mycon, self.mycur = connect()
-        sql = """
-            SELECT 
-                pd.product_id,
-                pd.product_name,
-                pd.`description`,
-                pd.price,
-                pd.offer,
-                cd.category_name
-                
-
-            FROM product_details pd
-
-            INNER JOIN category_details cd ON
-
-                cd.category_id = pd.category_id
-
-        """
-        self.mycur.execute(sql)
-        product_data = self.mycur.fetchall()
-
-        # Get column names
-        columns = [desc[0] for desc in self.mycur.description]
-
-        # Store dataset as structured dicts
-        self.product_details = [
-            dict(zip(columns, row)) for row in product_data
-        ]
+        try:
+            self.product_details = list(
+                ProductDetails.objects.select_related("category")
+                .annotate(
+                    product_id=F("id"),  # alias id as product_id
+                    category_name=F("category__category_name")
+                )
+                .values(
+                    "product_id",
+                    "product_name",
+                    "description",
+                    "price",
+                    "offer",
+                    "category_name"
+                )
+            )
+            print(self.product_details)
+        except Exception as e:
+            print("Error in Collect Database ", e)
+            self.product_details = None
 
     def dataset_processing(self):
         """Return dataset with structured fields"""
         try:
+            if not self.product_details:
+                return False
             dataset = []
             for items in self.product_details:
                 dataset.append({
@@ -55,7 +51,7 @@ class CollectDatas:
                     "description": items['description'],
                     "price": float(items['price']),
                     "offer": items['offer'],
-                    "category_name":items['category_name']
+                    "category_name": items['category_name']
                 })
             return dataset
         except Exception as e:
@@ -111,9 +107,12 @@ class ChatBot(CollectDatas):
     def train_model(self):
         """Prepare TF-IDF matrix"""
         self.dataset = self.dataset_processing()
+        if not self.dataset:
+            return None
+        
         self.texts = self.build_corpus(self.dataset)
         self.tfidf_matrix = self.vectorizer.fit_transform(self.texts)
-        return self.tfidf_matrix, self.dataset
+        
 
     def calculate_similarity(self, user_query, tfidf_matrix):
         """Vectorize query and compute similarity scores"""
@@ -165,8 +164,10 @@ class ChatBot(CollectDatas):
         return results
 
     def run(self,user_query):
+
         if self.tfidf_matrix is None or self.dataset is None:
-            self.train_model()
+            if not self.train_model():
+                return None
 
         search_results = self.search_products(user_query, n=5)
 

@@ -39,7 +39,7 @@
                         <tr>
                             <td>
                                 <a href="{% url 'view_product_details' orders.product_id %}">
-                                    <img src="/{{ MEDIA_URL }}{{ orders.image_url }}" alt="{{ orders.product_name }}">
+                                    <img src="/media/{{ orders.images}}" alt="{{ orders.product_name }}">
                                 </a>
                             </td>
                             <td>{{ orders.product_name }}</td>

@@ -26,11 +26,11 @@
                 <form method="post" class="checkout-form">
                     {% csrf_token %}
                     <select name="shipping_add" required>
-                        {% for user in user_details %}
+                        
                         <option value="{{ user.details_id }}">
-                            {{ user.shipping_address }}, {{ user.shipping_city }}, {{ user.shipping_state }}, {{ user.shipping_country }}, {{ user.shipping_zipcode }}
+                            {{ user.address }}, {{ user.city }}, {{ user.state }}, {{ user.country }}, {{ user.zipcode }}
                         </option>
-                        {% endfor %}
+                      
                     </select>
 
                     <!-- Payment Method -->

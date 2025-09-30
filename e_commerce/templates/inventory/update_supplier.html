@@ -18,14 +18,14 @@
         <input type="text" id="supplier_name" name="supplier_name" value="{{supplier.supplier_name}}" required><br><br>
 
         <label for="supplier_contact_name">Supplier Contact Name:</label><br>
-        <input type="text" id="supplier_contact_name" name="supplier_contact_name" value="{{supplier.supplier_contact}}" required><br><br>
+        <input type="text" id="supplier_contact_name" name="supplier_contact_name" value="{{supplier.contact_name}}" required><br><br>
         
         <label for="mobile">Supplier Mobile:</label>
-        <input type="text" id="mobile" name="mobile" value="{{supplier.supplier_mobile}}" required><br><br>
+        <input type="text" id="mobile" name="mobile" value="{{supplier.phone}}" required><br><br>
 
         <label for="address">Address:</label>
         <input type="text" id="address" name="address" value="{{supplier.address}}" required><br><br>
-
+ 
         <label for="price">City:</label>
         <input type="text" id="city" name="city" value="{{supplier.city}}"  required><br><br>
 
@@ -36,16 +36,14 @@
         <input type="text" id="country" name="country" value="{{supplier.country}}" required><br><br>
 
         <label for="zipcode">Zipcode:</label>
-        <input type="text" id="zipcode" name="zipcode" value="{{supplier.zipcode}}" required><br><br>
+        <input type="text" id="zipcode" name="zipcode" value="{{supplier.postal_code}}" required><br><br>
 
-       
         <button type="submit">Update Supplier</button>
     </form>
-    
  
     <button><a href="{% url 'suppliers_management' %}">Back</a>
     </button>
-
+ 
     {% if error %}
         <script>
             alert("Failed to add product!");

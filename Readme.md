@@ -68,44 +68,6 @@ e_commerce/
 ├─ db.sqlite3               # Database
 ├─ manage.py                # Django manager
 ├─ requirements.txt
-└─ query.sql
-```
-
----
-
-## 🛠️ Database Setup
-
-### 1. Execute SQL Queries
-- All SQL queries for creating tables and inserting data are written in **`query.sql`**.  
-- Open MySQL Workbench or terminal and execute the file:
-
-```sql
--- Example using terminal:
-mysql -u root -p e_commerce < query.sql
-```
-
-Python Database Connection
-
-Connection is handled in e_commerce/database.py
-
-```py
-import pymysql
-
-def connect():
-    try:
-        mycon = pymysql.connect(
-            host="127.0.0.1",
-            user="root",        # Change this if your MySQL username is different
-            password="root",    # Change this if your MySQL password is different
-            database="e_commerce"
-        )
-        mycur = mycon.cursor()
-        return mycon, mycur
-
-    except Exception as e:
-        print("Database.py Error:", e)
-        return None, None
-
 ```
 
 

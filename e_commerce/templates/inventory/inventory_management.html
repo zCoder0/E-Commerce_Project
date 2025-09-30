@@ -37,12 +37,14 @@
             
             {% for product in products %}
             <tr>
+                
                 <td>{{ product.product_name }}</td>
                 <td>{{ product.price }}</td>
                 <td>{{ product.stock }}</td>
                 <td>{{ product.description }}</td>
-              
-                <td><img src="/{{MEDIA_URL}}{{product.image_url}}"  width="100"></td>
+                <td><img src="/media/{{product.images}}"  width="100"></td>
+               
+
                 <td>
                     <a href="{% url 'update_product_request' product.product_id %}">Edit</a> |
                     <a href="{% url 'delete_product_request' product.product_id %}">Delete</a> |

@@ -14,14 +14,14 @@
         <h1>Product Details</h1>
 
         <section class="product-detail">
-            <img src="/{{ MEDIA_URL }}{{ product.image_url }}" width="200" height="200" alt="{{ product.product_name }}">
+            <img src="/media/{{ product.images }}" width="200" height="200" alt="{{ product.product_name }}">
             
             <div class="product-info">
                 <h2>{{ product.product_name }}</h2>
                 <p><strong>Description:</strong> {{ product.description }}</p>
                 <p class="price">Price: ${{ product.price }}</p>
                 <p><strong>Offer:</strong> {{ product.offer }}%</p>
-                <p><strong>Discounted Price:</strong> ${{ product.disscount_price }}</p>
+                <p><strong>Disscounted Price:</strong> ${{ product.disscounted_price }}</p>
                 <p><strong>Stock:</strong> {{ product.stock }}</p>
                 
                 <button>
