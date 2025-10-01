@@ -314,21 +314,27 @@ def chatBot(request):
         if request.method=="POST":
             user_query = request.POST['user_query']
             products = cb.run(user_query)
-            if not products:
-                print("No products ")
-                return render(request ,'user/index.html',{
-                'products':None,
-                'user_query':user_query
-                })
-            items=[]
-            for product in products:
-                items.append( get_product_by_id(product_id=product['product_id']))
             
-            products = get_all_products()
+            all_products_details = get_all_products()
+            items=[]
+            print("Products ",products)
+            for product in products:
+                if product['product_id']:
+                    items.append( get_product_by_id(product_id=product['product_id']))
+
+            if not items:
+                    print("No products ")
+                    return render(request ,'user/index.html',{
+                    'products':all_products_details,
+                    'user_query':user_query,
+                    
+                    
+                })
+            
             return render(request ,'user/index.html',{
                 'chat_items':items,
-                'products':products,
-                'user_query':user_query
+                'products':all_products_details,
+                'user_query':user_query,
             })
         
         else:

@@ -81,10 +81,17 @@
           </div>
         </div>
         {% endfor %}
+
       {% else %}
         <div class="chat-message bot">
           <p>Hello! Ask me about products.</p>
         </div>
+      {% endif %}
+
+      {% if noProducts %}
+      <div class="chat-message bot">
+                <p>No Products available </p>
+      </div>
       {% endif %}
     </div>
     <form method="POST" action="{% url 'chatBot' %}" class="chat-footer d-flex p-2">

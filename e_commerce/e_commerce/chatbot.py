@@ -163,17 +163,21 @@ class ChatBot(CollectDatas):
         return results
 
     def run(self,user_query):
+        try:
+            if self.tfidf_matrix is None or self.dataset is None:
+                if not self.train_model():
+                    return None
 
-        if self.tfidf_matrix is None or self.dataset is None:
-            if not self.train_model():
-                return None
+            search_results = self.search_products(user_query, n=5)
 
-        search_results = self.search_products(user_query, n=5)
+            print(f"Search results for '{user_query}':")
+            product_details=[]
+            for result in search_results:
+                product_details.append({"product_id":result['product_id']})
 
-        print(f"Search results for '{user_query}':")
-        product_details=[]
-        for result in search_results:
-            product_details.append({"product_id":result['product_id']})
-
-        return product_details
+            return product_details
+    
+        except Exception as e:
+            print("Error in Run ",e)
+            return None
 

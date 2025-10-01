@@ -6,8 +6,6 @@ from inventory.inventory_action import *
 # Create your views here.
 from user.views import PageNotFound
 
-
-
 # Inventory Dashboard
 
 def inventory_dashboard(request):
